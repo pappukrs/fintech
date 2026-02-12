@@ -1,0 +1,1 @@
+{"version":3,"file":"response-formatter.js","sourceRoot":"","sources":["response-formatter.ts"],"names":[],"mappings":";;;AAEO,MAAM,eAAe,GAAG,CAAC,GAAa,EAAE,IAAS,EAAE,UAAkB,SAAS,EAAE,aAAqB,GAAG,EAAE,EAAE;IAC/G,OAAO,GAAG,CAAC,MAAM,CAAC,UAAU,CAAC,CAAC,IAAI,CAAC;QAC/B,MAAM,EAAE,SAAS;QACjB,OAAO;QACP,IAAI;KACP,CAAC,CAAC;AACP,CAAC,CAAC;AANW,QAAA,eAAe,mBAM1B"}

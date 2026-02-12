@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package loan;
+
+service LoanService {
+  rpc ApproveLoan (LoanRequest) returns (LoanResponse);
+  rpc RejectLoan (LoanRequest) returns (LoanResponse);
+  rpc GetLoan (GetLoanRequest) returns (LoanResponse);
+}
+
+message LoanRequest {
+  string loan_id = 1;
+  string admin_id = 2;
+  string reason = 3;
+}
+
+message GetLoanRequest {
+  string loan_id = 1;
+}
+
+message LoanResponse {
+  bool success = 1;
+  string message = 2;
+  string status = 3;
+}

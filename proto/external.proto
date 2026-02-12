@@ -1,0 +1,112 @@
+syntax = "proto3";
+
+package external;
+
+import "common.proto";
+
+service ExternalService {
+  // Verification Methods
+  rpc VerifyPAN (VerifyPANRequest) returns (VerifyPANResponse);
+  rpc VerifyAadhaar (VerifyAadhaarRequest) returns (VerifyAadhaarResponse);
+  rpc VerifyBankAccount (VerifyBankAccountRequest) returns (VerifyBankAccountResponse);
+  
+  // Payment Methods
+  rpc InitializePayment (InitializePaymentRequest) returns (InitializePaymentResponse);
+  rpc GetPaymentStatus (GetPaymentStatusRequest) returns (GetPaymentStatusResponse);
+
+  // Notification Methods
+  rpc SendSMS (SendSMSRequest) returns (common.StatusResponse);
+  rpc SendEmail (SendEmailRequest) returns (common.StatusResponse);
+  rpc SendPush (SendPushRequest) returns (common.StatusResponse);
+}
+
+// Verification Messages
+message VerifyPANRequest {
+  string user_id = 1;
+  string pan_number = 2;
+  string name_on_card = 3;
+}
+
+message VerifyPANResponse {
+  bool success = 1;
+  string message = 2;
+  string provider_reference = 3;
+  string response_payload = 4;
+}
+
+message VerifyAadhaarRequest {
+  string user_id = 1;
+  string aadhaar_number = 2;
+}
+
+message VerifyAadhaarResponse {
+  bool success = 1;
+  string message = 2;
+  string provider_reference = 3;
+  string response_payload = 4;
+}
+
+message VerifyBankAccountRequest {
+  string user_id = 1;
+  string account_number = 2;
+  string ifsc = 3;
+  string name_at_bank = 4;
+}
+
+message VerifyBankAccountResponse {
+  bool success = 1;
+  string message = 2;
+  string provider_reference = 3;
+  string response_payload = 4;
+}
+
+// Payment Messages
+message InitializePaymentRequest {
+  string user_id = 1;
+  double amount = 2;
+  string currency = 3;
+  string order_id = 4;
+  string customer_phone = 5;
+  string customer_email = 6;
+}
+
+message InitializePaymentResponse {
+  bool success = 1;
+  string message = 2;
+  string payment_session_id = 3;
+  string payment_url = 4;
+  string order_id = 5;
+  string status = 6;
+}
+
+message GetPaymentStatusRequest {
+  string order_id = 1;
+}
+
+message GetPaymentStatusResponse {
+  bool success = 1;
+  string message = 2;
+  string order_id = 3;
+  string status = 4;
+  string provider_reference = 5;
+}
+
+// Notification Messages
+message SendSMSRequest {
+  string phone_number = 1;
+  string message = 2;
+  string provider = 3;
+}
+
+message SendEmailRequest {
+  string email = 1;
+  string subject = 2;
+  string body = 3;
+  string provider = 4;
+}
+
+message SendPushRequest {
+  string user_id = 1;
+  string title = 2;
+  string body = 3;
+}

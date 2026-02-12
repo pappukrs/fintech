@@ -1,0 +1,30 @@
+{
+    "name": "api-gateway",
+    "version": "1.0.0",
+    "description": "Express API Gateway - Application Layer",
+    "main": "dist/index.js",
+    "type": "module",
+    "scripts": {
+        "start": "node dist/index.js",
+        "dev": "nodemon src/app.ts",
+        "build": "tsc"
+    },
+    "dependencies": {
+        "@platform/common": "file:../../common",
+        "dotenv": "^17.2.4",
+        "express": "^5.2.1",
+        "http-proxy-middleware": "^3.0.3",
+        "jsonwebtoken": "^9.0.2",
+        "morgan": "^1.10.0",
+        "express-validator": "^7.3.1"
+    },
+    "devDependencies": {
+        "@types/express": "^5.0.0",
+        "@types/jsonwebtoken": "^9.0.8",
+        "@types/morgan": "^1.9.9",
+        "@types/node": "^22.13.4",
+        "nodemon": "^3.1.9",
+        "ts-node": "^10.9.2",
+        "typescript": "^5.7.3"
+    }
+}

@@ -1,0 +1,39 @@
+# Build Dependencies
+node_modules/
+npm-debug.log*
+
+# Git
+.git
+.gitignore
+
+# Documentation
+README.md
+ARCHITECTURE.md
+PLAN.md
+plan.md
+TODO.md
+
+# Environment Secrets
+.env
+.env.*
+!.env.example
+
+# Docker Specific
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Test/Coverage
+coverage/
+.nyc_output
+test/
+tests/
+
+# OS/IDE
+.DS_Store
+.vscode/
+.idea/
+
+# Microservice specific build artifacts
+dist/
+build/

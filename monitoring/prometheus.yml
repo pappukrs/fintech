@@ -1,0 +1,53 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: 'api-gateway'
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['api-gateway:3000']
+
+  - job_name: 'auth-service'
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['auth-service:3000']
+
+  - job_name: 'user-service'
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['user-service:3002']
+
+  - job_name: 'loan-service'
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['loan-service:3003']
+
+  - job_name: 'payment-service'
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['payment-service:3004']
+
+  - job_name: 'emi-service'
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['emi-service:3004']
+
+  - job_name: 'admin-service'
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['admin-service:3006']
+
+  - job_name: 'notification-service'
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['notification-service:3007']
+
+  - job_name: 'external-service'
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['external-service:3008']

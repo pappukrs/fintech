@@ -1,0 +1,335 @@
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: fintech-postgres
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=adminpassword
+      - POSTGRES_DB=fintech_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d fintech_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: fintech-rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    restart: always
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:alpine
+    container_name: fintech-redis
+    ports:
+      - "6379:6379"
+    restart: always
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  auth-service:
+    build: 
+      context: .
+      dockerfile: services/auth-service/Dockerfile
+    container_name: fintech-auth
+    environment:
+      - JWT_KEY=supersecret
+      - DATABASE_URL=postgres://admin:adminpassword@postgres:5432/fintech_db
+      - NODE_ENV=development
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./services/auth-service/src:/app/src
+    restart: on-failure
+
+  user-service:
+    build:
+      context: .
+      dockerfile: services/user-service/Dockerfile
+    container_name: fintech-user
+    environment:
+      - PORT=3002
+      - GRPC_PORT=50052
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=admin
+      - DB_PASSWORD=adminpassword
+      - DB_NAME=fintech_db
+      - DB_SCHEMA=user_schema
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - REDIS_URL=redis://redis:6379
+      - NODE_ENV=development
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    volumes:
+      - ./services/user-service/src:/app/src
+    restart: on-failure
+
+  loan-service:
+    build:
+      context: .
+      dockerfile: services/loan-service/Dockerfile
+    container_name: fintech-loan
+    environment:
+      - PORT=3003
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=admin
+      - DB_PASSWORD=adminpassword
+      - DB_NAME=fintech_db
+      - DB_SCHEMA=loan_schema
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - REDIS_URL=redis://redis:6379
+      - USER_SERVICE_GRPC_URL=user-service:50052
+      - NODE_ENV=development
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      user-service:
+        condition: service_started
+    volumes:
+      - ./services/loan-service/src:/app/src
+    restart: on-failure
+
+  payment-service:
+    build:
+      context: .
+      dockerfile: services/payment-service/Dockerfile
+    container_name: fintech-payment
+    environment:
+      - PORT=3004
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=admin
+      - DB_PASSWORD=adminpassword
+      - DB_NAME=fintech_db
+      - DB_SCHEMA=payment_schema
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - REDIS_URL=redis://redis:6379
+      - NODE_ENV=development
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    volumes:
+      - ./services/payment-service/src:/app/src
+
+  emi-service:
+    build:
+      context: .
+      dockerfile: services/emi-service/Dockerfile
+    container_name: fintech-emi
+    environment:
+      - PORT=3004
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=admin
+      - DB_PASSWORD=adminpassword
+      - DB_NAME=fintech_db
+      - DB_SCHEMA=emi_schema
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - REDIS_URL=redis://redis:6379
+      - NODE_ENV=development
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    volumes:
+      - ./services/emi-service/src:/app/src
+    restart: on-failure
+
+  admin-service:
+    build:
+      context: .
+      dockerfile: services/admin-service/Dockerfile
+    container_name: fintech-admin
+    environment:
+      - PORT=3006
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=admin
+      - DB_PASSWORD=adminpassword
+      - DB_NAME=fintech_db
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - NODE_ENV=development
+      - LOAN_GRPC_URL=fintech-loan:50051
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      loan-service:
+        condition: service_started
+    volumes:
+      - ./services/admin-service/src:/app/src
+    restart: on-failure
+
+  notification-service:
+    build:
+      context: .
+      dockerfile: services/notification-service/Dockerfile
+    container_name: fintech-notification
+    environment:
+      - PORT=3007
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=admin
+      - DB_PASSWORD=adminpassword
+      - DB_NAME=fintech_db
+      - DB_SCHEMA=notification_schema
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - EXTERNAL_SERVICE_GRPC_URL=external-service:50053
+      - NODE_ENV=development
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      external-service:
+        condition: service_started
+    volumes:
+      - ./services/notification-service/src:/app/src
+
+  external-service:
+    build:
+      context: .
+      dockerfile: services/external-service/Dockerfile
+    container_name: fintech-external
+    environment:
+      - PORT=3008
+      - GRPC_PORT=50053
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=admin
+      - DB_PASSWORD=adminpassword
+      - DB_NAME=fintech_db
+      - DB_SCHEMA=external_schema
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672
+      - NODE_ENV=development
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    volumes:
+      - ./services/external-service/src:/app/src
+
+  api-gateway:
+    build:
+      context: .
+      dockerfile: services/api-gateway/Dockerfile
+    container_name: fintech-api-gateway
+    environment:
+      - PORT=3000
+      - AUTH_SERVICE_URL=http://auth-service:3000
+      - USER_SERVICE_URL=http://user-service:3002
+      - LOAN_SERVICE_URL=http://loan-service:3003
+      - EMI_SERVICE_URL=http://emi-service:3004
+      - PAYMENT_SERVICE_URL=http://payment-service:3004
+      - EXTERNAL_SERVICE_URL=http://external-service:3008
+      - ADMIN_SERVICE_URL=http://admin-service:3006
+    depends_on:
+      auth-service:
+        condition: service_started
+      user-service:
+        condition: service_started
+      loan-service:
+        condition: service_started
+      payment-service:
+        condition: service_started
+      admin-service:
+        condition: service_started
+      external-service:
+        condition: service_started
+    restart: on-failure
+
+  consul:
+    image: hashicorp/consul:1.15
+    container_name: fintech-consul
+    ports:
+      - "8500:8500"
+      - "8600:8600/udp"
+    volumes:
+      - ./monitoring/consul/services.json:/consul/config/services.json
+    command: "agent -dev -client=0.0.0.0"
+    restart: always
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: fintech-prometheus
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    depends_on:
+      - api-gateway
+      - auth-service
+      - user-service
+      - loan-service
+      - payment-service
+      - emi-service
+      - admin-service
+      - notification-service
+      - external-service
+    restart: always
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: fintech-grafana
+    ports:
+      - "3001:3000"
+    volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
+    depends_on:
+      - prometheus
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    restart: always
+
+  nginx-gateway:
+    build:
+      context: .
+      dockerfile: gateway/nginx/Dockerfile
+    container_name: fintech-nginx
+    ports:
+      - "8080:80"
+    depends_on:
+      api-gateway:
+        condition: service_started
+    restart: on-failure
+
+
+volumes:
+  postgres_data:
+  rabbitmq_data:

@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package common;
+
+message UserRef {
+  string id = 1;
+  string email = 2;
+}
+
+message StatusResponse {
+  bool success = 1;
+  string message = 2;
+}

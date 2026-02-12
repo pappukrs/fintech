@@ -1,0 +1,1 @@
+{"version":3,"file":"client-wrapper.d.ts","sourceRoot":"","sources":["client-wrapper.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,IAAI,MAAM,eAAe,CAAC;AAItC,qBAAa,iBAAiB;IAC1B,MAAM,CAAC,SAAS,CAAC,SAAS,EAAE,MAAM;IAWlC,MAAM,CAAC,YAAY,CAAC,WAAW,EAAE,GAAG,EAAE,OAAO,EAAE,MAAM;CAGxD"}

@@ -1,0 +1,33 @@
+{
+    "name": "notification-service",
+    "version": "1.0.0",
+    "description": "Communication engine service",
+    "type": "module",
+    "main": "dist/index.js",
+    "scripts": {
+        "start": "node dist/index.js",
+        "dev": "nodemon src/index.ts",
+        "build": "tsc",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "dependencies": {
+        "@platform/common": "file:../../common",
+        "express": "^5.2.1",
+        "dotenv": "^17.2.4",
+        "pg": "^8.18.0",
+        "amqplib": "^0.10.9",
+        "@grpc/grpc-js": "^1.14.3",
+        "@grpc/proto-loader": "^0.8.0",
+        "express-validator": "^7.3.1",
+        "winston": "^3.19.0"
+    },
+    "devDependencies": {
+        "@types/express": "^5.0.6",
+        "@types/node": "^25.2.3",
+        "@types/pg": "^8.16.0",
+        "@types/amqplib": "^0.10.8",
+        "typescript": "^5.9.3",
+        "nodemon": "^3.1.9",
+        "ts-node": "^10.9.2"
+    }
+}

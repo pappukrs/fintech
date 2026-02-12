@@ -1,0 +1,121 @@
+{
+    "services": [
+        {
+            "id": "api-gateway",
+            "name": "api-gateway",
+            "address": "api-gateway",
+            "port": 3000,
+            "checks": [
+                {
+                    "http": "http://api-gateway:3000/health",
+                    "interval": "10s",
+                    "timeout": "5s"
+                }
+            ]
+        },
+        {
+            "id": "auth-service",
+            "name": "auth-service",
+            "address": "auth-service",
+            "port": 3000,
+            "checks": [
+                {
+                    "http": "http://auth-service:3000/health",
+                    "interval": "10s",
+                    "timeout": "5s"
+                }
+            ]
+        },
+        {
+            "id": "user-service",
+            "name": "user-service",
+            "address": "user-service",
+            "port": 3002,
+            "checks": [
+                {
+                    "http": "http://user-service:3002/health",
+                    "interval": "10s",
+                    "timeout": "5s"
+                }
+            ]
+        },
+        {
+            "id": "loan-service",
+            "name": "loan-service",
+            "address": "loan-service",
+            "port": 3003,
+            "checks": [
+                {
+                    "http": "http://loan-service:3003/health",
+                    "interval": "10s",
+                    "timeout": "5s"
+                }
+            ]
+        },
+        {
+            "id": "payment-service",
+            "name": "payment-service",
+            "address": "payment-service",
+            "port": 3004,
+            "checks": [
+                {
+                    "http": "http://payment-service:3004/health",
+                    "interval": "10s",
+                    "timeout": "5s"
+                }
+            ]
+        },
+        {
+            "id": "emi-service",
+            "name": "emi-service",
+            "address": "emi-service",
+            "port": 3004,
+            "checks": [
+                {
+                    "http": "http://emi-service:3004/health",
+                    "interval": "10s",
+                    "timeout": "5s"
+                }
+            ]
+        },
+        {
+            "id": "admin-service",
+            "name": "admin-service",
+            "address": "admin-service",
+            "port": 3006,
+            "checks": [
+                {
+                    "http": "http://admin-service:3006/health",
+                    "interval": "10s",
+                    "timeout": "5s"
+                }
+            ]
+        },
+        {
+            "id": "notification-service",
+            "name": "notification-service",
+            "address": "notification-service",
+            "port": 3007,
+            "checks": [
+                {
+                    "http": "http://notification-service:3007/health",
+                    "interval": "10s",
+                    "timeout": "5s"
+                }
+            ]
+        },
+        {
+            "id": "external-service",
+            "name": "external-service",
+            "address": "external-service",
+            "port": 3008,
+            "checks": [
+                {
+                    "http": "http://external-service:3008/health",
+                    "interval": "10s",
+                    "timeout": "5s"
+                }
+            ]
+        }
+    ]
+}
